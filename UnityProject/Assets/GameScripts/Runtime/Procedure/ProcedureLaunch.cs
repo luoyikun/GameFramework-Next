@@ -22,6 +22,8 @@ namespace GameMain
 
             // 声音配置：根据用户配置数据，设置即将使用的声音选项
             InitSoundSettings();
+
+            
         }
 
         protected override void OnUpdate(ProcedureOwner procedureOwner, float elapseSeconds, float realElapseSeconds)

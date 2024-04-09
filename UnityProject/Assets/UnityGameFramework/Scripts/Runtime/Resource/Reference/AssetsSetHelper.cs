@@ -96,6 +96,7 @@ namespace GameFramework.Resource
 
             if (!isAsync)
             {
+                //同步加载
                 Material material = _resourceManager.LoadAsset<Material>(location, packageName);
                 image.material = material;
                 AssetsReference.Ref(material, image.gameObject);

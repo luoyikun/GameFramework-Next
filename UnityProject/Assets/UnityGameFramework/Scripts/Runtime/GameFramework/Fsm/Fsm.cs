@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace GameFramework.Fsm
 {
@@ -552,6 +553,7 @@ namespace GameFramework.Fsm
         /// <typeparam name="TState">要切换到的有限状态机状态类型。</typeparam>
         internal void ChangeState<TState>() where TState : FsmState<T>
         {
+            
             ChangeState(typeof(TState));
         }
 
@@ -571,7 +573,7 @@ namespace GameFramework.Fsm
             {
                 throw new GameFrameworkException(Utility.Text.Format("FSM '{0}' can not change state to '{1}' which is not exist.", new TypeNamePair(typeof(T), Name), stateType.FullName));
             }
-
+            Debug.Log("切换状态机：" + state.GetType());
             m_CurrentState.OnLeave(this, false);
             m_CurrentStateTime = 0f;
             m_CurrentState = state;

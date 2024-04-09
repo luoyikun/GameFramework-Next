@@ -638,18 +638,28 @@ namespace GameFramework.Resource
             
             string assetObjectKey = GetCacheKey(location, packageName);
 
+            //如果asset已经在loading中，等待
             await TryWaitingLoading(assetObjectKey);
             
+            //asset 池中可以获取
             AssetObject assetObject = m_AssetPool.Spawn(assetObjectKey);
             if (assetObject != null)
             {
                 return assetObject.Target as T;
             }
             
+            //加载bundle，等待加载完毕，再创建出Asset池
             _assetLoadingList.Add(assetObjectKey);
  
             AssetHandle handle = GetHandleAsync<T>(location, packageName: packageName);
 
+            if (string.IsNullOrEmpty(handle.LastError) == false)
+            {
+                //资源异常，迭代器非法
+                Debug.LogError($"AssetHandle 异常{handle.LastError}");
+                return null;
+            }
+            //迭代器转为unitask执行，这里使用await
             bool cancelOrFailed = await handle.ToUniTask().AttachExternalCancellation(cancellationToken).SuppressCancellationThrow();
 
             if (cancelOrFailed)
@@ -657,6 +667,7 @@ namespace GameFramework.Resource
                 return null;
             }
             
+            //bundle加载成功，创建asset池
             assetObject = AssetObject.Create(assetObjectKey, handle.AssetObject, handle,this);
             m_AssetPool.Register(assetObject, true);
 
